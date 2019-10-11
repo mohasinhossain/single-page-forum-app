@@ -1,1 +1,3 @@
-## Real Time Single Page Forum App
+# Real Time Single Page Forum App
+
+## This is a complete real time single page forum app using Laravel, Vuejs, Pusher, JWT, Beautify, Markdown and so on....................
