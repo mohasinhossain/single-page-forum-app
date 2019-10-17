@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -13,7 +14,15 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        //$this->middleware('auth:api', ['except' => ['login', 'signUp']]);
+        $this->middleware('JWT', ['except' => ['login', 'signUp']]);
+    }
+
+    public function signUp(Request $request)
+    {
+        $request->password = bcrypt($request->password);
+        User::create($request->all());
+        return $this->login($request);
     }
 
     /**
