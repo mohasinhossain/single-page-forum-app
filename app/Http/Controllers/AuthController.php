@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignUpRequest;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -18,9 +19,9 @@ class AuthController extends Controller
         $this->middleware('JWT', ['except' => ['login', 'signUp']]);
     }
 
-    public function signUp(Request $request)
+    public function signUp(SignUpRequest $request)
     {
-        $request->password = bcrypt($request->password);
+        //$request->password = bcrypt($request->password);
         User::create($request->all());
         return $this->login($request);
     }

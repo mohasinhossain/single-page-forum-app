@@ -13,8 +13,6 @@ Vue.use(Vuetify)
 
 import User from './helpers/user'
 window.User = User
-console.log(User.id())
-
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('AppHome', require('./components/AppHome.vue').default);
