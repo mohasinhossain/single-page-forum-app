@@ -14,10 +14,10 @@ class QuestionController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('JWT', ['except' => ['index', 'show']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('JWT', ['except' => ['index', 'show']]);
+    // }
 
     /**
      * Display a listing of the resource.
@@ -37,10 +37,12 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        //auth()->user()->question()->create($request->all());
-        Question::create($request->all());
+        //dd($request->all());
+        //$request['slug'] = str_slug($request->title);
+        //Question::create($request->all());
+        $question = auth()->user()->questions()->create($request->all());
         //return response('Created', Response::HTTP_Created);
-        return response('Created', 201);
+        return response(new QuestionResource($question), 201);
     }
 
     /**
