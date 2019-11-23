@@ -6,6 +6,7 @@ use App\Http\Resources\ReplyResource;
 use App\Models\Question;
 use App\Models\Reply;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReplyController extends Controller
 {
@@ -39,9 +40,10 @@ class ReplyController extends Controller
      */
     public function store(Question $question, Request $request)
     {
+        // $request->user_id = auth()->id();
         $reply = $question->replies()->create($request->all());
-        //return response(['reply' => $reply], 201);
-        return response('Created', 201);
+        return response(['reply' => new ReplyResource($reply)], 201);
+        //return response('Created', 201);
 
     }
 

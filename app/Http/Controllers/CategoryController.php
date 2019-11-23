@@ -15,7 +15,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return CategoryResource::collection(Category::latest()->get());
+        $categories = Category::latest()->get();
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -30,7 +31,7 @@ class CategoryController extends Controller
         $category->name = $request->name;
         $category->slug = str_slug($request->name);
         $category->save();
-        return response('Created', 201);
+        return response(new CategoryResource($category), 201);
     }
 
     /**
@@ -57,7 +58,7 @@ class CategoryController extends Controller
                 'name' => $request->name,
                 'slug' => str_slug($request->name),
             ]);
-        return response('Updated', 201);
+        return response(new CategoryResource($category), 201);
     }
 
     /**

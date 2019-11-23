@@ -8,23 +8,24 @@
         ></question>
       </v-flex>
 
-      <!-- <v-flex xs4>
-        <h3>Sidebar</h3>
-      </v-flex> -->
-    sidebar
+      <v-flex xs4>
+        <app-sidebar></app-sidebar>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
 import Question from './Question'
+import AppSidebar from './AppSidebar'
+
 export default {
     data(){
         return{
             questions: {}
         }
     },
-    components: {Question},
+    components: {Question, AppSidebar},
     created() {
         //console.log("fafaf");
         axios.get('/api/question')

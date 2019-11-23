@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container fluid>
         <v-card>
             <v-card-title>
                 <div>
@@ -9,7 +9,7 @@
                     <span class="grey--text">{{ data.created_by }} asked at {{ data.created_at }}</span>
                 </div>
                 <v-spacer></v-spacer>
-                <v-btn color="teal">5 Replies</v-btn>
+                <v-btn color="teal" dark>{{ data.total_reply }} Replies</v-btn>
             </v-card-title>
             <v-card-text v-html="body"></v-card-text>
             <v-card-actions v-if="own">
