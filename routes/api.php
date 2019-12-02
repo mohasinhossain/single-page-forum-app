@@ -16,3 +16,6 @@ Route::apiResource('/category', 'CategoryController');
 Route::apiResource('/{question}/reply', 'ReplyController');
 Route::post('/like/{reply}', 'LikeController@likeIt');
 Route::delete('/like/{reply}', 'LikeController@unLikeIt');
+Route::get('/notifications', 'NotificationController@index');
+Route::get('/markasread/{id}', 'NotificationController@markAsRead');
+

@@ -4,6 +4,8 @@
             <v-card-title>
                 <div class="headline">{{ data.replied_by }}</div>
                 <div class="ml-2">replied {{ data.replied_at }}</div>
+                <v-spacer></v-spacer>
+                <like :content="data"></like>
             </v-card-title>
             <v-divider></v-divider>
             <edit-reply v-if="editing"
@@ -26,10 +28,11 @@
 
 <script>
 import EditReply from './edit'
+import Like from '../likes/like'
 
 export default {
     props: ['data', 'index'],
-    components: {EditReply},
+    components: {EditReply, Like},
     data(){
         return{
             editing: false,
