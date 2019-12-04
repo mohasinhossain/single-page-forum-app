@@ -32,6 +32,13 @@ export default {
         if(User.loggedIn()){
             this.getNotifications()
         }
+
+        Echo.private('App.User.' + User.id())
+                .notification((notification) => {
+                //console.log(notification.type);
+                this.unread.unshift(notification)
+                this.unreadCount++
+            });
     },
     methods: {
         getNotifications(){
