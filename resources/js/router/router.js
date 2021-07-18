@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+import Home from '../components/Home'
 import SignUp from '../components/login/SignUp'
 import Login from '../components/login/Login'
 import Logout from '../components/login/Logout'
@@ -13,21 +14,22 @@ import CreateCategory from '../components/category/Create'
 
 
 const routes = [
+    { path: '/', component: Home },
     { path: '/signup', component: SignUp },
     { path: '/login', component: Login },
     { path: '/logout', component: Logout },
-    { path: '/forum', component: Forum, name: 'forum'},
-    { path: '/ask', component: CreateQuestion, name: 'create'},
-    { path: '/question/:slug', component: Read, name: 'read'},
+    { path: '/forum', component: Forum, name: 'forum' },
+    { path: '/ask', component: CreateQuestion, name: 'create' },
+    { path: '/question/:slug', component: Read, name: 'read' },
 
-    { path: '/category', component: CreateCategory},
+    { path: '/category', component: CreateCategory },
 
-  ]
+]
 
-  const router = new VueRouter({
+const router = new VueRouter({
     routes,
     //hashbang: false,
     mode: 'history'
-  })
+})
 
-  export default router
+export default router
