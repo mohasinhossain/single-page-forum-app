@@ -3,7 +3,7 @@
     <v-container fill-height>
       <v-layout align-center>
         <v-flex>
-          <h3 class="display-3">Welcome to the real SPA forum discussion</h3>
+          <h3 class="display-3">Welcome to the real time SPA forum discussion</h3>
 
           <v-divider class="my-3"></v-divider>
 
