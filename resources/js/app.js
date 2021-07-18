@@ -21,6 +21,9 @@ window.md = md
 import User from './helpers/user'
 window.User = User
 
+import Exception from './helpers/exception'
+window.Exception = Exception
+
 //Vue EventBus
 window.EventBus = new Vue();
 

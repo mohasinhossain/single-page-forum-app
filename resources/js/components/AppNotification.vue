@@ -48,6 +48,7 @@ export default {
                  this.unread = response.data.unread
                  this.unreadCount = response.data.unread.length
             })
+            .catch(error => Exception.handle(error))
         },
         markAsRead(abc){
             axios.get(`/api/markasread/${abc.id}`)

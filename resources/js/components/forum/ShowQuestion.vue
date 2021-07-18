@@ -9,7 +9,7 @@
                     <span class="grey--text">{{ data.created_by }} asked at {{ data.created_at }}</span>
                 </div>
                 <v-spacer></v-spacer>
-                <v-btn color="teal" dark>{{ data.total_reply }} Replies</v-btn>
+                <v-btn color="teal" dark>{{ totalReply }} Replies</v-btn>
             </v-card-title>
             <v-card-text v-html="body"></v-card-text>
             <v-card-actions v-if="own">
@@ -29,8 +29,29 @@ export default {
     props: ['data'],
     data(){
         return{
+            totalReply: this.data.total_reply,
             own: User.own(this.data.user_id)
         }
+    },
+    created() {
+        EventBus.$on('newReply', ()=>{
+                this.totalReply++
+        })
+
+        Echo.private('App.User.' + User.id())
+            .notification((notification) => {
+                //console.log(notification.type);
+                this.totalReply++
+            });
+
+        EventBus.$on('deleteReply', ()=>{
+                this.totalReply--
+        })
+
+        Echo.channel('DeleteReplyChannel')
+            .listen('DeleteReplyEvent', (e) => {
+                this.totalReply--
+            })
     },
     computed:{
         body(){

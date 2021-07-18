@@ -1803,6 +1803,8 @@ __webpack_require__.r(__webpack_exports__);
         _this2.read = response.data.read;
         _this2.unread = response.data.unread;
         _this2.unreadCount = response.data.unread.length;
+      })["catch"](function (error) {
+        return Exception.handle(error);
       });
     },
     markAsRead: function markAsRead(abc) {
@@ -2322,6 +2324,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -2342,6 +2347,11 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.listen();
     this.getQuestion();
+  },
+  computed: {
+    loggedIn: function loggedIn() {
+      return User.loggedIn();
+    }
   },
   methods: {
     listen: function listen() {
@@ -2407,8 +2417,26 @@ __webpack_require__.r(__webpack_exports__);
   props: ['data'],
   data: function data() {
     return {
+      totalReply: this.data.total_reply,
       own: User.own(this.data.user_id)
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    EventBus.$on('newReply', function () {
+      _this.totalReply++;
+    });
+    Echo["private"]('App.User.' + User.id()).notification(function (notification) {
+      //console.log(notification.type);
+      _this.totalReply++;
+    });
+    EventBus.$on('deleteReply', function () {
+      _this.totalReply--;
+    });
+    Echo.channel('DeleteReplyChannel').listen('DeleteReplyEvent', function (e) {
+      _this.totalReply--;
+    });
   },
   computed: {
     body: function body() {
@@ -2422,10 +2450,10 @@ __webpack_require__.r(__webpack_exports__);
       // .catch(error => console.log(error.response.data))
     },
     destroy: function destroy() {
-      var _this = this;
+      var _this2 = this;
 
       axios["delete"]("/api/question/".concat(this.data.slug)).then(function (response) {
-        return _this.$router.push('/forum');
+        return _this2.$router.push('/forum');
       })["catch"](function (error) {
         return console.log(error.response.data);
       });
@@ -66520,7 +66548,20 @@ var render = function() {
             [
               _c("replies", { attrs: { question: _vm.question } }),
               _vm._v(" "),
-              _c("new-reply", { attrs: { questionSlug: _vm.question.slug } })
+              _vm.loggedIn
+                ? _c("new-reply", {
+                    attrs: { questionSlug: _vm.question.slug }
+                  })
+                : _c(
+                    "div",
+                    { staticClass: "mt-4" },
+                    [
+                      _c("router-link", { attrs: { to: "/login" } }, [
+                        _vm._v("Login to reply")
+                      ])
+                    ],
+                    1
+                  )
             ],
             1
           )
@@ -66578,7 +66619,7 @@ var render = function() {
               _c("v-spacer"),
               _vm._v(" "),
               _c("v-btn", { attrs: { color: "teal", dark: "" } }, [
-                _vm._v(_vm._s(_vm.data.total_reply) + " Replies")
+                _vm._v(_vm._s(_vm.totalReply) + " Replies")
               ])
             ],
             1
@@ -108221,7 +108262,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! marked */ "./node_modules/marked/lib/marked.js");
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(marked__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _helpers_user__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./helpers/user */ "./resources/js/helpers/user.js");
-/* harmony import */ var _router_router_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./router/router.js */ "./resources/js/router/router.js");
+/* harmony import */ var _helpers_exception__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./helpers/exception */ "./resources/js/helpers/exception.js");
+/* harmony import */ var _router_router_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./router/router.js */ "./resources/js/router/router.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); // src/plugins/vuetify.js
@@ -108237,7 +108279,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_simplemde__WEBPACK_IMPORTED_M
 window.md = marked__WEBPACK_IMPORTED_MODULE_3___default.a; //Helper class
 
 
-window.User = _helpers_user__WEBPACK_IMPORTED_MODULE_4__["default"]; //Vue EventBus
+window.User = _helpers_user__WEBPACK_IMPORTED_MODULE_4__["default"];
+
+window.Exception = _helpers_exception__WEBPACK_IMPORTED_MODULE_5__["default"]; //Vue EventBus
 
 window.EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
@@ -108246,7 +108290,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('AppHome', __webpack_requir
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
-  router: _router_router_js__WEBPACK_IMPORTED_MODULE_5__["default"]
+  router: _router_router_js__WEBPACK_IMPORTED_MODULE_6__["default"]
 });
 
 /***/ }),
@@ -109798,6 +109842,52 @@ function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (AppStorage = new AppStorage());
+
+/***/ }),
+
+/***/ "./resources/js/helpers/exception.js":
+/*!*******************************************!*\
+  !*** ./resources/js/helpers/exception.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./user */ "./resources/js/helpers/user.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Exception =
+/*#__PURE__*/
+function () {
+  function Exception() {
+    _classCallCheck(this, Exception);
+  }
+
+  _createClass(Exception, [{
+    key: "handle",
+    value: function handle(error) {
+      this.isExipred(error.response.data.error);
+    }
+  }, {
+    key: "isExipred",
+    value: function isExipred(error) {
+      if (error == 'Token is expired') {
+        _user__WEBPACK_IMPORTED_MODULE_0__["default"].logOut();
+      }
+    }
+  }]);
+
+  return Exception;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Exception = new Exception());
 
 /***/ }),
 
